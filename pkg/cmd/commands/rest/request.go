@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jmespath/go-jmespath"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/usacloud/pkg/cli"
 	"github.com/sacloud/usacloud/pkg/cmd/core"
@@ -136,7 +135,7 @@ func requestFunc(ctx cli.Context, parameter interface{}) ([]interface{}, error) 
 			return nil, err
 		}
 		if p.Query != "" {
-			temp, err = searchByJMESPath(ctx, temp, p.Query)
+			temp, err = util.SearchByJMESPath(ctx.IO().Err(), temp, p.Query)
 			if err != nil {
 				return nil, err
 			}
@@ -150,16 +149,4 @@ func requestFunc(ctx cli.Context, parameter interface{}) ([]interface{}, error) 
 		return nil, err
 	}
 	return nil, nil
-}
-
-func searchByJMESPath(ctx cli.Context, v interface{}, query string) (result interface{}, err error) {
-	defer func() {
-		ret := recover()
-		if ret != nil {
-			fmt.Fprintf(ctx.IO().Err(), "jmespath.Search failed: parse error\n")
-			err = fmt.Errorf("jmespath.Search failed: %s", ret)
-		}
-	}()
-	result, err = jmespath.Search(query, v)
-	return
 }

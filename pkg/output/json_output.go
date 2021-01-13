@@ -21,7 +21,6 @@ import (
 	"os"
 
 	"github.com/fatih/structs"
-	"github.com/jmespath/go-jmespath"
 	"github.com/sacloud/usacloud/pkg/util"
 )
 
@@ -58,7 +57,7 @@ func (o *jsonOutput) Print(contents Contents) error {
 			return fmt.Errorf("JSONOutput:Query: loading query from %q Failed: %s", o.query, err)
 		}
 
-		v, err := o.searchByJMESPath(targets, query)
+		v, err := util.SearchByJMESPath(o.err, targets, query)
 		if err != nil {
 			return fmt.Errorf("JSONOutput:Query: jmespath.Search is Failed: %s", err)
 		}
@@ -103,16 +102,4 @@ func (o *jsonOutput) Print(contents Contents) error {
 	o.out.Write(b) // nolint
 	fmt.Fprintln(o.out, "")
 	return nil
-}
-
-func (o *jsonOutput) searchByJMESPath(v interface{}, query string) (result interface{}, err error) {
-	defer func() {
-		ret := recover()
-		if ret != nil {
-			fmt.Fprintf(o.err, "jmespath.Search failed: parse error\n")
-			err = fmt.Errorf("jmespath.Search failed: %s", ret)
-		}
-	}()
-	result, err = jmespath.Search(query, v)
-	return
 }
