@@ -42,10 +42,11 @@ var requestCommand = &core.Command{
 }
 
 type requestParameter struct {
-	Zone   string `validate:"omitempty,zone"` // 通常のzoneと扱いが異なるためcflag.ZoneParameterを利用しない
-	Method string `cli:",short=X,options=rest_method" validate:"required,rest_method"`
-	Data   string `cli:",short=d" validate:"omitempty,file|json"`
-	Query  string `cli:",category=output,desc=JMESPath query" validate:"omitempty"`
+	Zone        string `validate:"omitempty,zone"` // 通常のzoneと扱いが異なるためcflag.ZoneParameterを利用しない
+	Method      string `cli:",short=X,options=rest_method" validate:"required,rest_method"`
+	Data        string `cli:",short=d" validate:"omitempty,file|json"`
+	Query       string `cli:",category=output,desc=JMESPath query" validate:"omitempty"`
+	QueryDriver string `cli:",category=output,desc=JSON query driver" validate:"omitempty"`
 }
 
 func newRequestParameter() *requestParameter {
@@ -135,7 +136,11 @@ func requestFunc(ctx cli.Context, parameter interface{}) ([]interface{}, error) 
 			return nil, err
 		}
 		if p.Query != "" {
-			temp, err = util.SearchByJMESPath(ctx.IO().Err(), temp, p.Query)
+			if p.QueryDriver == "gojq" {
+				temp, err = util.FilterPrintByGoJQ(ctx.IO().Err(), temp, p.Query)
+			} else {
+				temp, err = util.SearchByJMESPath(ctx.IO().Err(), temp, p.Query)
+			}
 			if err != nil {
 				return nil, err
 			}
