@@ -16,18 +16,14 @@ package util
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/jmespath/go-jmespath"
 )
 
-func SearchByJMESPath(errW io.Writer, v interface{}, query string) (result interface{}, err error) {
+func SearchByJMESPath(v interface{}, query string) (result interface{}, err error) {
 	defer func() {
 		ret := recover()
 		if ret != nil {
-			if errW != nil {
-				fmt.Fprintf(errW, "jmespath.Search failed: parse error\n")
-			}
 			err = fmt.Errorf("jmespath.Search failed: %s", ret)
 		}
 	}()

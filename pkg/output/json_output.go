@@ -57,7 +57,7 @@ func (o *jsonOutput) Print(contents Contents) error {
 			return fmt.Errorf("JSONOutput:Query: loading query from %q Failed: %s", o.query, err)
 		}
 
-		v, err := util.SearchByJMESPath(o.err, targets, query)
+		v, err := util.SearchByJMESPath(targets, query)
 		if err != nil {
 			return fmt.Errorf("JSONOutput:Query: jmespath.Search is Failed: %s", err)
 		}

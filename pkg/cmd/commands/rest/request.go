@@ -135,7 +135,7 @@ func requestFunc(ctx cli.Context, parameter interface{}) ([]interface{}, error) 
 			return nil, err
 		}
 		if p.Query != "" {
-			temp, err = util.SearchByJMESPath(ctx.IO().Err(), temp, p.Query)
+			temp, err = util.SearchByJMESPath(temp, p.Query)
 			if err != nil {
 				return nil, err
 			}
