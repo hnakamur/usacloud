@@ -83,3 +83,5 @@ fmt:
 
 set-license:
 	@addlicense -c $(AUTHOR) -y $(COPYRIGHT_YEAR) $(COPYRIGHT_FILES)
+
+.SUFFIXES: # Delete the default suffixes, especially for .y file in gojq
